@@ -3,12 +3,14 @@ package main
 import(
 	"net/http"
 	"log"
+
+	"github.com/SpikeIsUp/igApi/router"
 )
 
 func main() {
 
 	// r devient router
-	r := router.Router
+	r := router.Router()
 
 // fichiers statiques
 	fs := http.FileServer(http.Dir("asset"))
