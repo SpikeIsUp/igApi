@@ -2,80 +2,70 @@ package controller
 
 import (
 	"html/template"
-	"log"
 	"net/http"
-	"path/filepath"
+
+	"pissonChat_groupie_tracker/internal/meme"
+	"pissonChat_groupie_tracker/internal/storage"
 )
 
-// lire les template
-func RenderTemplate(w http.ResponseWriter, tmpl string) error {
-    path := filepath.Join("template", tmpl)
-    log.Println("Rendu:", path)
-
-    t, err := template.ParseFiles(path)
-    if err != nil {
-        log.Println("Erreur ParseFiles:", err)
-        http.Error(w, "Erreur serveur (template introuvable)", http.StatusInternalServerError)
-        return err
-    }
-
-    w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-    if err := t.Execute(w, nil); err != nil {
-        log.Println("Erreur Execute:", err)
-        http.Error(w, "Erreur serveur (render)", http.StatusInternalServerError)
-        return err
-    }
-
-    return nil
-}
-
-// dire a renderTemplate de lire les bonne template en fontion des routes
-func APropos(w http.ResponseWriter, r *http.Request) {
-    log.Println("GET /aPropos")
-    if err := RenderTemplate(w, "aPropos.html"); err != nil {
-        log.Println("Erreur RenderTemplate:", err)
-    }
-}
-
-func Categories(w http.ResponseWriter, r *http.Request) {
-    log.Println("GET /categories")
-    if err := RenderTemplate(w, "categories.html"); err != nil {
-        log.Println("Erreur RenderTemplate:", err)
-    }
-}
-
-func Collection(w http.ResponseWriter, r *http.Request) {
-    log.Println("GET /collection")
-    if err := RenderTemplate(w, "collection.html"); err != nil {
-        log.Println("Erreur RenderTemplate:", err)
-    }
-}
-
-func Favoris(w http.ResponseWriter, r *http.Request) {
-    log.Println("GET /favoris")
-    if err := RenderTemplate(w, "favoris.html"); err != nil {
-        log.Println("Erreur RenderTemplate:", err)
-    }
-}
-
 func Home(w http.ResponseWriter, r *http.Request) {
-    log.Println("GET /")
-    if err := RenderTemplate(w, "home.html"); err != nil {
-        log.Println("Erreur RenderTemplate:", err)
-    }
+	memes, _ := meme.GetMemes()
+	tmpl := template.Must(template.ParseFiles("template/home.html"))
+	tmpl.Execute(w, memes)
 }
 
-func Recherche(w http.ResponseWriter, r *http.Request) {
-    log.Println("GET /recherche")
-    if err := RenderTemplate(w, "recherche.html"); err != nil {
-        log.Println("Erreur RenderTemplate:", err)
-    }
+func Search(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query().Get("q")
+	memes, _ := meme.GetMemes()
+
+	var result []meme.Meme
+	for _, m := range memes {
+		if query == "" || contains(m.Name, query) {
+			result = append(result, m)
+		}
+	}
+
+	tmpl := template.Must(template.ParseFiles("template/recherche.html"))
+	tmpl.Execute(w, result)
 }
 
-func Ressources(w http.ResponseWriter, r *http.Request) {
-    log.Println("GET /ressources")
-    if err := RenderTemplate(w, "ressources.html"); err != nil {
-        log.Println("Erreur RenderTemplate:", err)
-    }
+func Favorites(w http.ResponseWriter, r *http.Request) {
+	rows, _ := storage.DB.Query("SELECT id, name, url FROM favorites")
+	defer rows.Close()
+
+	var memes []meme.Meme
+	for rows.Next() {
+		var m meme.Meme
+		rows.Scan(&m.ID, &m.Name, &m.URL)
+		memes = append(memes, m)
+	}
+
+	tmpl := template.Must(template.ParseFiles("template/favoris.html"))
+	tmpl.Execute(w, memes)
+}
+
+func AddFavorite(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	storage.DB.Exec(
+		"INSERT OR IGNORE INTO favorites VALUES (?, ?, ?)",
+		r.FormValue("id"),
+		r.FormValue("name"),
+		r.FormValue("url"),
+	)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func RemoveFavorite(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	storage.DB.Exec("DELETE FROM favorites WHERE id = ?", r.FormValue("id"))
+	http.Redirect(w, r, "/favorites", http.StatusSeeOther)
+}
+
+func About(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("template/aPropos.html"))
+	tmpl.Execute(w, nil)
+}
+
+func contains(a, b string) bool {
+	return len(a) >= len(b) && (a == b || len(b) == 0 || (len(a) > len(b) && contains(a[1:], b)))
 }
