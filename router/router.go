@@ -3,12 +3,11 @@ package router
 import (
 	"net/http"
 
-	"pissonChat_groupie_tracker/controller"
+	"github.com/SpikeIsUp/pissonChat_groupie_tracker/controller"
 )
 
 func SetupRouter() *http.ServeMux {
 	mux := http.NewServeMux()
-
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 
 	mux.HandleFunc("/", controller.Home)

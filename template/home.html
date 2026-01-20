@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Meme Universe</title>
+    <link rel="stylesheet" href="../assets/css/home.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Meme Universe</h1>
+      <nav>
+        <a href="/">Accueil</a>
+        <a href="/favorites">Favoris</a>
+        <a href="/about">À propos</a>
+      </nav>
+    </header>
+
+    <main>
+      {{range .}}
+      <div class="meme-card">
+        <img src="{{.Blank}}" alt="{{.Name}}" />
+        <div class="meme-title">{{.Name}}</div>
+
+        <form method="POST" action="/favorite/add">
+          <input type="hidden" name="id" value="{{.ID}}" />
+          <input type="hidden" name="name" value="{{.Name}}" />
+          <input type="hidden" name="blank" value="{{.Blank}}" />
+          <button type="submit">Ajouter aux favoris</button>
+        </form>
+      </div>
+      {{end}}
+    </main>
+  </body>
+</html>

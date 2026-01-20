@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"pissonChat_groupie_tracker/internal/storage"
-	"pissonChat_groupie_tracker/router"
+	"github.com/SpikeIsUp/pissonChat_groupie_tracker/SQLiteinternal/storage"
+	"github.com/SpikeIsUp/pissonChat_groupie_tracker/router"
 )
 
 func main() {

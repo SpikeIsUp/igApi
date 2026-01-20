@@ -6,9 +6,9 @@ import (
 )
 
 type Meme struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	URL  string `json:"url"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Blank string `json:"blank"`
 }
 
 func GetMemes() ([]Meme, error) {

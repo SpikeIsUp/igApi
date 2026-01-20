@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap");
+
+body {
+  margin: 0;
+  font-family: "Comic Neue", cursive;
+  background-color: #fff8e1;
+  color: #3e2723;
+}
+
+header {
+  background-color: #ffb74d;
+  padding: 16px 32px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+  color: #4e342e;
+  font-size: 2rem;
+  margin: 0;
+}
+
+nav a {
+  color: #4e342e;
+  text-decoration: none;
+  margin: 0 12px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.meme-card {
+  background: #ffe0b2;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.meme-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.meme-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.meme-title {
+  font-weight: bold;
+  margin: 12px 0;
+  color: #bf360c;
+  text-align: center;
+}
+
+button {
+  background-color: #ffb74d;
+  color: #4e342e;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #ffa726;
+}
+
+@media (max-width: 1024px) {
+  main {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  main {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
